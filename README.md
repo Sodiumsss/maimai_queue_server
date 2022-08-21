@@ -1,4 +1,4 @@
-## 服务端启动
+## 自己打包启动服务端
 
 1. 更改**resources**中**application.properties**中内容：
 
@@ -16,7 +16,11 @@
 
 2. 使用**maven**，**package**
    如果成功，jar文件将会在target目录下。
-3. 启动方法java -jar xxxxxx.jar
+3. 启动方法，用**cmd**输入**java -jar xxxxxx.jar**
+
+## DIY
+
+你可以更改**wb.java**中的**Information**以更新客户端上方公告。
 
 
 

@@ -1,6 +1,6 @@
 ## 自己打包启动服务端
 
-1. 更改**resources**中**application.properties**中内容：
+1. 更改**src/main/resources**中**application.properties**中内容：
 
    更改等于号后的xxx、port、abc、qwe、1234以配置数据库链接，数据库账号以及密码。还有服务器端口。
 

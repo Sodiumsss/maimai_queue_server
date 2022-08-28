@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin
 @RestController
 public class maimai {
+
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -97,7 +100,7 @@ public class maimai {
     {
 
         String kind = get_kind(name);
-        if (kind==null || kind.equals("2") || kind.equals("3"))
+        if (Objects.equals(kind, "-1") || kind.equals("2") || kind.equals("3"))
         {
             return "-1";
         }
@@ -117,8 +120,10 @@ public class maimai {
     @RequestMapping("/op_delete")
     public String op_delete(String name)
     {
+
+
         String kind =get_kind(name);
-        if (kind==null || kind.equals("1") || kind.equals("3"))
+        if (kind.equals("-1") || kind.equals("1") || kind.equals("3"))
         {
             return "-1";
         }

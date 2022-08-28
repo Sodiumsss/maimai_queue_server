@@ -77,11 +77,12 @@ public class wb {
 
     public void printQueue()
     {
-        StringBuilder tmp= new StringBuilder("[List]");
+        StringBuilder tmp= new StringBuilder("[List]{");
         for (String i : nameQueue)
         {
             tmp.append(i).append(" ");
         }
+        tmp.append("}");
         System.out.println(tmp);
     }
 
@@ -185,11 +186,7 @@ public class wb {
                         }
                     }
                 }
-
             }
-
         }catch (Exception e){e.printStackTrace();}
-
-
     }
 }

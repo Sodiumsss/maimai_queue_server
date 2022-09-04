@@ -57,6 +57,47 @@ public class maimai {
     }
 
     @CrossOrigin
+    @PostMapping("/check")
+    public String login(String acc,String pw,String kind)
+    {
+        if (acc==null || pw==null){return "-1";}
+        if (acc.equals("") || pw.equals("")){return "-1";}
+        System.out.println("[Check]"+acc);
+
+        String sql = "select pw,kind from user_info where acc=?";
+
+        List<String> info=jdbcTemplate.execute(sql, (PreparedStatementCallback<List<String>>) ps -> {
+            ps.setString(1,acc);
+            ResultSet rs = ps.executeQuery();
+            List<String> info1 = new ArrayList<>();
+            if (rs.next())
+            {
+                info1.add(rs.getString("pw"));
+                info1.add(rs.getString("kind"));
+            }
+            return info1;
+        });
+
+        if (info== null || info.size()!=2)
+        {
+            return "-1";
+        }
+
+        if (!kind.equals(info.get(1)))
+        {
+            return "-1";
+        }
+        if (!pw.equals(info.get(0)))
+        {
+            return "-1";
+        }
+
+        return "1";
+    }
+
+
+
+    @CrossOrigin
     @PostMapping("/register")
     public String register(String acc,String pw)
     {
@@ -120,8 +161,6 @@ public class maimai {
     @RequestMapping("/op_delete")
     public String op_delete(String name)
     {
-
-
         String kind =get_kind(name);
         if (kind.equals("-1") || kind.equals("1") || kind.equals("3"))
         {

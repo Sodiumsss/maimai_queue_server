@@ -181,7 +181,7 @@ public class wb {
                         }
                         case 2 -> {
                             onlineSessions.forEach((acc, ses) -> ses.getAsyncRemote().sendText(object.toString()));
-                            System.out.println("[SendMessage_Everyone]");
+                            System.out.println("[SendMessage_All]");
                         }
                     }
                 }

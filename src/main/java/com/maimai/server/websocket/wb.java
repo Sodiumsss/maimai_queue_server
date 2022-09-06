@@ -1,6 +1,7 @@
 package com.maimai.server.websocket;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.maimai.server.beans.userText;
 import org.springframework.stereotype.Component;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
@@ -17,13 +18,17 @@ public class wb {
     private static final Map<String, Session> onlineSessions = new ConcurrentHashMap<>();
     private static final ArrayList<String> nameQueue =new ArrayList<>();
     private static final HashSet<String> nameSet =new HashSet<>();
-    private static final String Information="è¦ä½¿ç”¨æ¸¸å®¢æ¨¡å¼å—ï¼Ÿ";
+    private static final ArrayList<userText> textArray =new ArrayList<>();
 
+
+    private static final String Information="ÒªÊ¹ÓÃÓÎ¿ÍÄ£Ê½Âğ£¿";
+
+    //ÅÅ¿¨¶ÓÁĞ¹¦ÄÜ¿ªÊ¼
     public ArrayList<String> getQueue()
+
     {
         return nameQueue;
     }
-
     public boolean pushQueue(String acc)
     {
         if (onlineSessions.get(acc)==null){return false;}
@@ -38,7 +43,6 @@ public class wb {
         }
         return false;
     }
-
     public boolean popQueue(String acc)
     {
         try {
@@ -52,14 +56,12 @@ public class wb {
         }
 
     }
-
     public boolean clearQueue()
     {
         nameQueue.clear();
         nameSet.clear();
         return true;
     }
-
     public boolean balanceQueue()
     {
         if (nameQueue.size()>2)
@@ -74,7 +76,6 @@ public class wb {
         }
         return false;
     }
-
     public void printQueue()
     {
         StringBuilder tmp= new StringBuilder("[List]{");
@@ -85,6 +86,28 @@ public class wb {
         tmp.append("}");
         System.out.println(tmp);
     }
+    //ÅÅ¿¨¶ÓÁĞ¹¦ÄÜ½áÊø
+
+    //ÏûÏ¢Êı×é¹¦ÄÜ¿ªÊ¼
+    public void pushText(userText userText)
+    {
+        while (textArray.size()>30)
+        {
+            textArray.remove(0);
+        }
+        textArray.add(userText);
+        System.out.println("[NowTextSize]"+textArray.size());
+    }
+    public void clearText()
+    {
+        textArray.clear();
+    }
+
+
+    //ÏûÏ¢Êı×é¹¦ÄÜ½áÊø
+
+
+
 
     @OnOpen
     public void onOpen(Session session, @PathParam("acc") String acc) {
@@ -124,11 +147,10 @@ public class wb {
 
     @OnMessage
     public void onMessage(String message,Session session) {
-        //System.out.println("[Message]"+message);
+        System.out.println("[Message]"+message);
         try {
             JSONObject jsonObject=JSON.parseObject(message);
             int type=jsonObject.getInteger("type");
-
             JSONObject object = new JSONObject();
             switch (type)
             {
@@ -168,8 +190,7 @@ public class wb {
                     object.put("status",status);
                     session.getAsyncRemote().sendText(object.toString());
                 }
-                case 3->
-                {
+                case 3-> {
                     int index=jsonObject.getInteger("index");
                     object.put("type",3);
                     object.put("data",getQueue());
@@ -184,6 +205,29 @@ public class wb {
                             System.out.println("[SendMessage_All]");
                         }
                     }
+                }
+                case 4->{
+
+                    int index=jsonObject.getInteger("index");
+                    object.put("type",4);
+                    switch (index)
+                    {
+                        case 1->{//»ñÈ¡µ±Ç°ÏûÏ¢
+                            object.put("data",textArray);
+                            session.getAsyncRemote().sendText(object.toString());
+
+                        }
+                        case 2->{//Ìí¼ÓĞÂÏûÏ¢
+                            userText userText=jsonObject.getObject("userText", com.maimai.server.beans.userText.class);
+                            System.out.println("[AddText]"+userText.getTime());
+                            pushText(userText);
+                            object.put("data",textArray);
+                            onlineSessions.forEach((acc, ses) -> ses.getAsyncRemote().sendText(object.toString()));
+                        }
+                    }
+
+
+
                 }
             }
         }catch (Exception e){e.printStackTrace();}

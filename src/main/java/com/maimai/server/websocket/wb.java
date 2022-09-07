@@ -7,6 +7,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -163,7 +164,7 @@ public class wb {
 
 
     @OnMessage
-    public void onMessage(String message,Session session) {
+    public synchronized void onMessage(String message,Session session) {
         if (debug)
         {
             System.out.println("[Message]"+message);
@@ -183,7 +184,9 @@ public class wb {
                     }
                     object.put("type", 1);
                     object.put("data", Information);
+
                     session.getAsyncRemote().sendText(object.toString());
+
                 }
                 case 2 -> {
                     int index=jsonObject.getInteger("index");
@@ -229,7 +232,7 @@ public class wb {
                     }
                     object.put("type",2);
                     object.put("status",status);
-                    session.getAsyncRemote().sendText(object.toString());
+                    session.getBasicRemote().sendText(object.toString());
                 }
                 case 3-> {
                     int index=jsonObject.getInteger("index");
@@ -238,7 +241,7 @@ public class wb {
                     switch (index)
                     {
                         case 1 -> {
-                            session.getAsyncRemote().sendText(object.toString());
+                            session.getBasicRemote().sendText(object.toString());
                             if (debug)
                             {
                                 System.out.println("[SendMessage]");
@@ -263,7 +266,7 @@ public class wb {
                     {
                         case 1->{//获取当前消息
                             object.put("data",textArray);
-                            session.getAsyncRemote().sendText(object.toString());
+                            session.getBasicRemote().sendText(object.toString());
 
                         }
                         case 2->{//添加新消息

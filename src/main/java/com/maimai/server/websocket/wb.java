@@ -19,11 +19,11 @@ public class wb {
     private static final ArrayList<String> nameQueue =new ArrayList<>();
     private static final HashSet<String> nameSet =new HashSet<>();
     private static final ArrayList<userText> textArray =new ArrayList<>();
+    private static final boolean debug=false;
 
+    private static final String Information="ä½ è¯´å¾—å¯¹ï¼Œä½†æ˜¯ã€Šã€‹æ˜¯";
 
-    private static final String Information="ÒªÊ¹ÓÃÓÎ¿ÍÄ£Ê½Âğ£¿";
-
-    //ÅÅ¿¨¶ÓÁĞ¹¦ÄÜ¿ªÊ¼
+    //æ’å¡é˜Ÿåˆ—åŠŸèƒ½å¼€å§‹
     public ArrayList<String> getQueue()
 
     {
@@ -86,9 +86,9 @@ public class wb {
         tmp.append("}");
         System.out.println(tmp);
     }
-    //ÅÅ¿¨¶ÓÁĞ¹¦ÄÜ½áÊø
+    //æ’å¡é˜Ÿåˆ—åŠŸèƒ½ç»“æŸ
 
-    //ÏûÏ¢Êı×é¹¦ÄÜ¿ªÊ¼
+    //æ¶ˆæ¯æ•°ç»„åŠŸèƒ½å¼€å§‹
     public void pushText(userText userText)
     {
         while (textArray.size()>30)
@@ -96,15 +96,18 @@ public class wb {
             textArray.remove(0);
         }
         textArray.add(userText);
-        System.out.println("[NowTextSize]"+textArray.size());
-    }
-    public void clearText()
-    {
-        textArray.clear();
-    }
 
+        if (debug)
+        {
+            System.out.println("[NowTextSize]"+textArray.size());
+        }
+    }
+    //public void clearText()
+    //    {
+    //        textArray.clear();
+    //    }
 
-    //ÏûÏ¢Êı×é¹¦ÄÜ½áÊø
+    //æ¶ˆæ¯æ•°ç»„åŠŸèƒ½ç»“æŸ
 
 
 
@@ -119,11 +122,19 @@ public class wb {
         if (onlineSessions.get(acc)==null)
         {
             onlineSessions.put(acc,session);
-            System.out.println("[Connected]"+acc+"[Online]"+onlineSessions.size());
+
+            if (debug)
+            {
+                System.out.println("[Connected]"+acc+"[Online]"+onlineSessions.size());
+            }
+
         }
         else
         {
-            System.out.println("[Reconnected]"+acc+"[Online]"+onlineSessions.size());
+            if (debug)
+            {
+                System.out.println("[Reconnected]"+acc+"[Online]"+onlineSessions.size());
+            }
         }
 
 
@@ -131,7 +142,10 @@ public class wb {
 
     @OnClose
     public void onClose(Session session,@PathParam("acc")String acc) throws IOException {
-        System.out.println("[Closed]"+acc);
+        if (debug)
+        {
+            System.out.println("[Closed]"+acc);
+        }
         session.close();
         onlineSessions.remove(acc);
     }
@@ -140,14 +154,21 @@ public class wb {
     @OnError
     public void onError(Session session,Throwable throwable)
     {
-        System.out.println("[Error]"+session.getId());
+        if (debug)
+        {
+            System.out.println("[Error]"+session.getId());
+        }
         throwable.printStackTrace();
     }
 
 
     @OnMessage
     public void onMessage(String message,Session session) {
-        System.out.println("[Message]"+message);
+        if (debug)
+        {
+            System.out.println("[Message]"+message);
+
+        }
         try {
             JSONObject jsonObject=JSON.parseObject(message);
             int type=jsonObject.getInteger("type");
@@ -155,7 +176,11 @@ public class wb {
             switch (type)
             {
                 case 1 -> {
-                    System.out.println("[GetInformation]");
+                    if (debug)
+                    {
+                        System.out.println("[GetInformation]");
+
+                    }
                     object.put("type", 1);
                     object.put("data", Information);
                     session.getAsyncRemote().sendText(object.toString());
@@ -168,22 +193,38 @@ public class wb {
                         case 1->
                         {
                             String name = jsonObject.getString("name");
-                            System.out.println("[Try_PushQueue]"+name);
+                            if (debug)
+                            {
+                                System.out.println("[Try_PushQueue]"+name);
+
+                            }
                             status=pushQueue(name);
                         }
                         case 2->
                         {
                             String name = jsonObject.getString("name");
-                            System.out.println("[Try_PopQueue]"+name);
+                            if (debug)
+                            {
+                                System.out.println("[Try_PopQueue]"+name);
+
+                            }
                             status=popQueue(name);
                         }
                         case 3 -> {
                             status=balanceQueue();
-                            System.out.println("[Try_BalanceQueue]");
+                            if (debug)
+                            {
+                                System.out.println("[Try_BalanceQueue]");
+
+                            }
                         }
                         case 4 -> {
                             status=clearQueue();
-                            System.out.println("[Try_ClearQueue]");
+                            if (debug)
+                            {
+                                System.out.println("[Try_ClearQueue]");
+
+                            }
                         }
                     }
                     object.put("type",2);
@@ -198,11 +239,19 @@ public class wb {
                     {
                         case 1 -> {
                             session.getAsyncRemote().sendText(object.toString());
-                            System.out.println("[SendMessage]");
+                            if (debug)
+                            {
+                                System.out.println("[SendMessage]");
+
+                            }
                         }
                         case 2 -> {
                             onlineSessions.forEach((acc, ses) -> ses.getAsyncRemote().sendText(object.toString()));
-                            System.out.println("[SendMessage_All]");
+                            if (debug)
+                            {
+                                System.out.println("[SendMessage_All]");
+
+                            }
                         }
                     }
                 }
@@ -212,14 +261,17 @@ public class wb {
                     object.put("type",4);
                     switch (index)
                     {
-                        case 1->{//»ñÈ¡µ±Ç°ÏûÏ¢
+                        case 1->{//è·å–å½“å‰æ¶ˆæ¯
                             object.put("data",textArray);
                             session.getAsyncRemote().sendText(object.toString());
 
                         }
-                        case 2->{//Ìí¼ÓĞÂÏûÏ¢
+                        case 2->{//æ·»åŠ æ–°æ¶ˆæ¯
                             userText userText=jsonObject.getObject("userText", com.maimai.server.beans.userText.class);
-                            System.out.println("[AddText]"+userText.getTime());
+                            if (debug)
+                            {
+                                System.out.println("[AddText]"+userText.getTime());
+                            }
                             pushText(userText);
                             object.put("data",textArray);
                             onlineSessions.forEach((acc, ses) -> ses.getAsyncRemote().sendText(object.toString()));

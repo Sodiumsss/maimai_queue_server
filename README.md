@@ -18,13 +18,11 @@
    如果成功，jar文件将会在target目录下。
 3. 启动方法，用**cmd**输入**java -jar xxxxxx.jar**
 
-## DIY
-
-你可以更改**wb.java**中的**Information**以更新客户端上方公告。
-
-
-
-
+## 提示
+- 公告：wb.java中Information变量
+- debug(websocket)：wb.java中debug变量，true为开启，false为关闭，开启后将会输出websocket行为到控制台。
+否则仅显示错误信息
+- java版本>=18
 
 
 

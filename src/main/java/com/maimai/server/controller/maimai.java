@@ -1,6 +1,5 @@
 package com.maimai.server.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -8,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class maimai {
 
 
-    @Autowired
+    @Resource(name = "jdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
     @CrossOrigin
@@ -27,8 +27,6 @@ public class maimai {
     {
         if (acc==null || pw==null){return "-1";}
         if (acc.equals("") || pw.equals("")){return "-1";}
-
-        System.out.println("[TryLogin]"+acc);
         String sql = "select pw,kind from user_info where acc=?";
 
         List<String> info=jdbcTemplate.execute(sql, (PreparedStatementCallback<List<String>>) ps -> {
@@ -58,7 +56,7 @@ public class maimai {
 
     @CrossOrigin
     @PostMapping("/check")
-    public String login(String acc,String pw,String kind)
+    public String check(String acc,String pw,String kind)
     {
         if (acc==null || pw==null){return "-1";}
         if (acc.equals("") || pw.equals("")){return "-1";}

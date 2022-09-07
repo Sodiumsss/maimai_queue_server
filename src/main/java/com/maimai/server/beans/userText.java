@@ -1,22 +1,9 @@
 package com.maimai.server.beans;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
-
 public class userText {
     private String name;
     private String text;
     private String time;
-
-//    public userText(String message) {
-//        try {
-//            JSONObject jsonObject= JSON.parseObject(message);
-//            this.name=jsonObject.getString("name");
-//            this.text=jsonObject.getString("text");
-//            this.date=jsonObject.getString("date");
-//        }
-//        catch (Exception e){e.printStackTrace();}
-//    }
 
     public String getName() {
         return name;
